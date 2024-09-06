@@ -12,6 +12,11 @@
         <p style="color: #086;">{!! $value !!}</p>
     @endsession
 
+    <!-- Mensagem de error -->
+    @session('error')
+        <p style="color: #f00;">{!! $value !!}</p>
+    @endsession
+
     <!-- Mensagem de erro -->
     @if ($errors->any())
         @foreach ($errors->all() as $error)

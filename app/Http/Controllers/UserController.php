@@ -39,6 +39,9 @@ class UserController extends Controller
         // Iniciando variável que recebe o número de registro
         $numberRegisteredRecords = 0;
 
+        // Inicia lista de emails já cadastrados
+        $emailAlreadyRegistered = false;
+
         // Percorre as linhas do ficheiro
         foreach ($dataFile as $KeyData => $row) {
 
@@ -47,6 +50,24 @@ class UserController extends Controller
 
             // Percorre as colunas do cabeçalho
             foreach($headers as $key => $header) {
+
+                // Verificar se a coluna é email
+                if ($header == 'email') {
+
+                    // Verificar se o email já existe
+                    if (User::where('email', $values[$key])->first()) {
+
+                        // Atribuir o email na lista de emails já cadastrados
+                        $emailAlreadyRegistered .= $values[$key] . ",";
+                    }
+                }
+
+                // Criar um array com os valores dos dados
+                $arrayValues[$KeyData] = [];
+
+                // Atribuir o valor ao elemento do array
+                $arrayValues[$KeyData][$header] = $values[$key];
+
                 // Atribuir o valor ao elemento do array
                 $arrayValues[$KeyData][$header] = $values[$key];
 
@@ -54,7 +75,13 @@ class UserController extends Controller
             // Adiciona o número de registro
             $numberRegisteredRecords++;
         }
-        // dd($arrayValues);
+
+        // Verificar se existe e-mail já cadastrado, retorna erro e não caastra na base de dados
+        if ($emailAlreadyRegistered) {
+
+            // Retorna erro e não caastra na base de dados
+            return back()->with('error', 'Dados não importados. Existem emails já cadstrados: ,<br>'. $emailAlreadyRegistered);
+        }
 
         // Cadastrar registros na base de dados
         User::insert($arrayValues);
