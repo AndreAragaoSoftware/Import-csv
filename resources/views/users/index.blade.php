@@ -7,6 +7,12 @@
 </head>
 <body>
 
+    <!-- Mensagem de sucesso -->
+    @session('success')
+        <p style="color: #086;">{!! $value !!}</p>
+    @endsession
+
+    <!-- Mensagem de erro -->
     @if ($errors->any())
         @foreach ($errors->all() as $error)
             <p style="color: #f00;">{{ $error }}</p>

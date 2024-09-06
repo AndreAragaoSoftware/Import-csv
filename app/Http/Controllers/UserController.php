@@ -36,6 +36,9 @@ class UserController extends Controller
         // Ler os dados e converter em array
         $dataFile = array_map('str_getcsv', file($request->file('file')));
 
+        // Iniciando variável que recebe o número de registro
+        $numberRegisteredRecords = 0;
+
         // Percorre as linhas do ficheiro
         foreach ($dataFile as $KeyData => $row) {
 
@@ -46,8 +49,17 @@ class UserController extends Controller
             foreach($headers as $key => $header) {
                 // Atribuir o valor ao elemento do array
                 $arrayValues[$KeyData][$header] = $values[$key];
+
             }
+            // Adiciona o número de registro
+            $numberRegisteredRecords++;
         }
-        dd($arrayValues);
+        // dd($arrayValues);
+
+        // Cadastrar registros na base de dados
+        User::insert($arrayValues);
+
+        // Redirecionamento para página anterior com uma mensagem de sucesso
+        return back()->with('success', 'Usuários importados com sucesso. <br>Quantidade: ' . $numberRegisteredRecords);
     }
 }
